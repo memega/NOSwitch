@@ -1,35 +1,36 @@
-# NOSwitch
+## NOSwitch
 
-A subclass of NSButton and NSButtonCell with looks similar to UISwitch control in iOS7.
+A subclass of NSButton which looks similar to the UISwitch control in iOS7
 
 ![alt text](http://i.imgur.com/18RooVw.jpg "NOSwitch demo")
 
+### Usage
 
-**Usage**
+Place a `Check Box` in your **nib** and select it. Open Utilities→Identity Inspector (`⌥⌘3`) and assign `NOSwitchButton` class.
 
-Place a Check Box in your nib. Open Utilities→Identity Inspector (```⌥⌘3```) and assign ```NOSwitchButton``` class.
-
-Or, in code:
+Or create it in code:
 
 ```obj-c
 #import "NOSwitchButton.h"
 
-NOSwitchButton *button = [[NOSwitchButton alloc] initWithFrame:NSMakeFrame(0,0,60,36)];
+NOSwitchButton *button = [[NOSwitchButton alloc] initWithFrame:NSMakeRect(0,0,60,36)];
 [self.window.contentView addSubview:button];
 ```
 
-**Customization**
+### Customization
 
-By default, ```NOSwitchButton``` uses same shade of green as iOS7 UISwitch. You can change it with ```tintColor``` property:
+By default, `NOSwitchButton` uses the same <span style="background-color:#55DD75;padding:1px 4px;border-radius:3px;">shade of green</span> as UISwitch in iOS7. You can change it with `tintColor` property:
 
 ```obj-c
 button.tintColor = [NSColor colorWithCalibratedHue:0.05 saturation:0.86 brightness:0.99 alpha:1];
 ```
 
-**Limitations**
+### Limitations
 
-Currently this cell does not display text value.
+* Does not support `NSMixedState`. An attempt to set `allowsMixedState` to `YES` will have no effect.
 
-**License**
+* This control does not display neither text value nor custom image.
 
-This projected is licensed under the terms of the [MIT license](http://memega.mit-license.org/).
+### License
+
+This project is licensed under the terms of the [MIT license](http://memega.mit-license.org/).
