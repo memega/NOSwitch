@@ -48,10 +48,10 @@ static inline CGFloat easingFunctionOut(CGFloat t) {
 	return t * t * ((overshoot + 1) * t - overshoot);
 }
 
-float clampf(float value, float min_inclusive, float max_inclusive)
+static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_inclusive)
 {
 	if (min_inclusive > max_inclusive) {
-        float temp = min_inclusive;
+        CGFloat temp = min_inclusive;
         min_inclusive = max_inclusive;
         max_inclusive = temp;
 	}
@@ -415,7 +415,7 @@ float clampf(float value, float min_inclusive, float max_inclusive)
 
 #pragma mark - Tracking
 
-- (NSUInteger)hitTestForEvent:(NSEvent *)event inRect:(NSRect)cellFrame ofView:(NSView *)controlView
+- (NSCellHitResult)hitTestForEvent:(NSEvent *)event inRect:(NSRect)cellFrame ofView:(NSView *)controlView
 {
 	NSPoint mouseLocation = [controlView convertPoint:[event locationInWindow] fromView:nil];
 	return NSPointInRect(mouseLocation, cellFrame) ? (NSCellHitContentArea | NSCellHitTrackableArea) : NSCellHitNone;
