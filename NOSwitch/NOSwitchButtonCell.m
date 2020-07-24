@@ -183,7 +183,7 @@ static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_i
 
 - (void)setBackgroundStateForCellState:(NSCellStateValue)cellState {
     switch (cellState) {
-        case NSOnState:
+        case NSControlStateValueOn:
             _backgroundState = NOMTSwitchBackgroundStateOn;
             break;
             
@@ -206,10 +206,10 @@ static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_i
     
     NSCellStateValue state = [self state];
 	switch (state) {
-		case NSOnState:
+		case NSControlStateValueOn:
             thumbRect.origin.x = cellFrame.origin.x + cellFrame.size.width - thumbRect.size.width - STROKE_INSET - THUMB_INSET;
             break;
-        case NSOffState:
+        case NSControlStateValueOff:
             break;
     }
     
@@ -298,11 +298,11 @@ static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_i
     } else {
         if (self.isEnabled) {
             switch ([self state]) {
-                case NSOnState:
+                case NSControlStateValueOn:
                     fillColor = self.tintColor;
                     strokeColor = self.tintColor;
                     break;
-                case NSOffState:
+                case NSControlStateValueOff:
                     fillColor = [NSColor colorWithCalibratedRed:1. green:1. blue:1. alpha:0.];
                     strokeColor = [NSColor colorWithCalibratedRed:0.8 green:0.8 blue:0.8 alpha:1];
                     break;
@@ -383,9 +383,9 @@ static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_i
 
 - (NSColor *)disabledBackgroundColorForState:(NSCellStateValue)state {
     switch (state) {
-        case NSOnState:
+        case NSControlStateValueOn:
             return [self.tintColor highlightWithLevel:.5];
-        case NSOffState:
+        case NSControlStateValueOff:
             return [NSColor colorWithCalibratedWhite:1. alpha:1];
         default:
             break;
@@ -395,9 +395,9 @@ static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_i
 
 - (NSColor *)disabledStrokeColorForState:(NSCellStateValue)state {
     switch (state) {
-        case NSOnState:
+        case NSControlStateValueOn:
             return [self disabledBackgroundColorForState:state];
-        case NSOffState:
+        case NSControlStateValueOff:
             return [[NSColor colorWithCalibratedWhite:.8 alpha:1] highlightWithLevel:.5];
         default:
             break;
@@ -460,9 +460,9 @@ static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_i
         NSCellStateValue desiredState;
         
         if (xRatio < .5)
-            desiredState = NSOffState;
+            desiredState = NSControlStateValueOff;
         else
-            desiredState = NSOnState;
+            desiredState = NSControlStateValueOn;
         
         if (desiredState != _trackingState) {
             
@@ -491,16 +491,16 @@ static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_i
             CGFloat xRatio = _trackingThumbCenterX / _trackingCellFrame.size.width;
             
             if (xRatio < .5)
-                desiredState = NSOffState;
+                desiredState = NSControlStateValueOff;
             else
-                desiredState = NSOnState;
+                desiredState = NSControlStateValueOn;
             
         } else {
             // if clicked in place, just toggle state
             desiredState = 1 - self.state;
         }
 
-        if (desiredState == NSOffState) {
+        if (desiredState == NSControlStateValueOff) {
             _backgroundState = NOMTSwitchBackgroundStateOffPressed;
             [self beginBackgroundTransitionTo:NOMTSwitchBackgroundStateOff];
         }
