@@ -85,7 +85,7 @@ static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_i
     CGFloat _trackingThumbCenterX;
     CGFloat _currentThumbOriginXRatio;
     NSRect _trackingCellFrame;
-    NSCellStateValue _trackingState;
+	NSControlStateValue _trackingState;
     
     CGFloat _trackingRatio;
     
@@ -181,7 +181,7 @@ static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_i
     [self setBackgroundStateForCellState:self.state];
 }
 
-- (void)setBackgroundStateForCellState:(NSCellStateValue)cellState {
+- (void)setBackgroundStateForCellState:(NSControlStateValue)cellState {
     switch (cellState) {
         case NSControlStateValueOn:
             _backgroundState = NOMTSwitchBackgroundStateOn;
@@ -204,7 +204,7 @@ static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_i
     
     NSRect thumbRect = NSMakeRect(STROKE_INSET + THUMB_INSET, SHADOW_INSET + THUMB_INSET, thumbRadius * 2 + (_isTracking ? 4 : 0), thumbRadius * 2);
     
-    NSCellStateValue state = [self state];
+	NSControlStateValue state = [self state];
 	switch (state) {
 		case NSControlStateValueOn:
             thumbRect.origin.x = cellFrame.origin.x + cellFrame.size.width - thumbRect.size.width - STROKE_INSET - THUMB_INSET;
@@ -362,7 +362,7 @@ static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_i
     
     NSBezierPath *thumb = [NSBezierPath bezierPathWithRoundedRect:thumbRect xRadius:thumbRadius yRadius:thumbRadius];
     
-    CGContextRef cgContext = [context graphicsPort];
+	CGContextRef cgContext = [context CGContext];
     CGSize shadowSize = {0., -2.};
     NSColor *shadowColor = self.isEnabled ? [NSColor colorWithWhite:0 alpha:1./3.] : [NSColor colorWithWhite:0. alpha:1./6.];
     CGContextSetShadowWithColor(cgContext, shadowSize, THUMB_SHADOW_BLUR, shadowColor.CGColor);
@@ -381,7 +381,7 @@ static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_i
     
 }
 
-- (NSColor *)disabledBackgroundColorForState:(NSCellStateValue)state {
+- (NSColor *)disabledBackgroundColorForState:(NSControlStateValue)state {
     switch (state) {
         case NSControlStateValueOn:
             return [self.tintColor highlightWithLevel:.5];
@@ -393,7 +393,7 @@ static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_i
     return self.tintColor;
 }
 
-- (NSColor *)disabledStrokeColorForState:(NSCellStateValue)state {
+- (NSColor *)disabledStrokeColorForState:(NSControlStateValue)state {
     switch (state) {
         case NSControlStateValueOn:
             return [self disabledBackgroundColorForState:state];
@@ -457,7 +457,7 @@ static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_i
 
         CGFloat xRatio = _trackingThumbCenterX / _trackingCellFrame.size.width;
             
-        NSCellStateValue desiredState;
+		NSControlStateValue desiredState;
         
         if (xRatio < .5)
             desiredState = NSControlStateValueOff;
@@ -482,7 +482,7 @@ static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_i
 	NSControl *control = [controlView isKindOfClass:[NSControl class]] ? (NSControl *)controlView : nil;
 	if (control) {
         
-        NSCellStateValue desiredState;
+		NSControlStateValue desiredState;
         
         // has to set the state to the previous to the expected state
         // because it loops internally afterwards
