@@ -48,10 +48,10 @@ static inline CGFloat easingFunctionOut(CGFloat t) {
 	return t * t * ((overshoot + 1) * t - overshoot);
 }
 
-float clampf(float value, float min_inclusive, float max_inclusive)
+static inline CGFloat clampf(CGFloat value, CGFloat min_inclusive, CGFloat max_inclusive)
 {
 	if (min_inclusive > max_inclusive) {
-        float temp = min_inclusive;
+        CGFloat temp = min_inclusive;
         min_inclusive = max_inclusive;
         max_inclusive = temp;
 	}
@@ -85,7 +85,7 @@ float clampf(float value, float min_inclusive, float max_inclusive)
     CGFloat _trackingThumbCenterX;
     CGFloat _currentThumbOriginXRatio;
     NSRect _trackingCellFrame;
-    NSCellStateValue _trackingState;
+	NSControlStateValue _trackingState;
     
     CGFloat _trackingRatio;
     
@@ -181,9 +181,9 @@ float clampf(float value, float min_inclusive, float max_inclusive)
     [self setBackgroundStateForCellState:self.state];
 }
 
-- (void)setBackgroundStateForCellState:(NSCellStateValue)cellState {
+- (void)setBackgroundStateForCellState:(NSControlStateValue)cellState {
     switch (cellState) {
-        case NSOnState:
+        case NSControlStateValueOn:
             _backgroundState = NOMTSwitchBackgroundStateOn;
             break;
             
@@ -204,12 +204,12 @@ float clampf(float value, float min_inclusive, float max_inclusive)
     
     NSRect thumbRect = NSMakeRect(STROKE_INSET + THUMB_INSET, SHADOW_INSET + THUMB_INSET, thumbRadius * 2 + (_isTracking ? 4 : 0), thumbRadius * 2);
     
-    NSCellStateValue state = [self state];
+	NSControlStateValue state = [self state];
 	switch (state) {
-		case NSOnState:
+		case NSControlStateValueOn:
             thumbRect.origin.x = cellFrame.origin.x + cellFrame.size.width - thumbRect.size.width - STROKE_INSET - THUMB_INSET;
             break;
-        case NSOffState:
+        case NSControlStateValueOff:
             break;
     }
     
@@ -298,11 +298,11 @@ float clampf(float value, float min_inclusive, float max_inclusive)
     } else {
         if (self.isEnabled) {
             switch ([self state]) {
-                case NSOnState:
+                case NSControlStateValueOn:
                     fillColor = self.tintColor;
                     strokeColor = self.tintColor;
                     break;
-                case NSOffState:
+                case NSControlStateValueOff:
                     fillColor = [NSColor colorWithCalibratedRed:1. green:1. blue:1. alpha:0.];
                     strokeColor = [NSColor colorWithCalibratedRed:0.8 green:0.8 blue:0.8 alpha:1];
                     break;
@@ -362,7 +362,7 @@ float clampf(float value, float min_inclusive, float max_inclusive)
     
     NSBezierPath *thumb = [NSBezierPath bezierPathWithRoundedRect:thumbRect xRadius:thumbRadius yRadius:thumbRadius];
     
-    CGContextRef cgContext = [context graphicsPort];
+	CGContextRef cgContext = [context CGContext];
     CGSize shadowSize = {0., -2.};
     NSColor *shadowColor = self.isEnabled ? [NSColor colorWithWhite:0 alpha:1./3.] : [NSColor colorWithWhite:0. alpha:1./6.];
     CGContextSetShadowWithColor(cgContext, shadowSize, THUMB_SHADOW_BLUR, shadowColor.CGColor);
@@ -381,11 +381,11 @@ float clampf(float value, float min_inclusive, float max_inclusive)
     
 }
 
-- (NSColor *)disabledBackgroundColorForState:(NSCellStateValue)state {
+- (NSColor *)disabledBackgroundColorForState:(NSControlStateValue)state {
     switch (state) {
-        case NSOnState:
+        case NSControlStateValueOn:
             return [self.tintColor highlightWithLevel:.5];
-        case NSOffState:
+        case NSControlStateValueOff:
             return [NSColor colorWithCalibratedWhite:1. alpha:1];
         default:
             break;
@@ -393,11 +393,11 @@ float clampf(float value, float min_inclusive, float max_inclusive)
     return self.tintColor;
 }
 
-- (NSColor *)disabledStrokeColorForState:(NSCellStateValue)state {
+- (NSColor *)disabledStrokeColorForState:(NSControlStateValue)state {
     switch (state) {
-        case NSOnState:
+        case NSControlStateValueOn:
             return [self disabledBackgroundColorForState:state];
-        case NSOffState:
+        case NSControlStateValueOff:
             return [[NSColor colorWithCalibratedWhite:.8 alpha:1] highlightWithLevel:.5];
         default:
             break;
@@ -415,7 +415,7 @@ float clampf(float value, float min_inclusive, float max_inclusive)
 
 #pragma mark - Tracking
 
-- (NSUInteger)hitTestForEvent:(NSEvent *)event inRect:(NSRect)cellFrame ofView:(NSView *)controlView
+- (NSCellHitResult)hitTestForEvent:(NSEvent *)event inRect:(NSRect)cellFrame ofView:(NSView *)controlView
 {
 	NSPoint mouseLocation = [controlView convertPoint:[event locationInWindow] fromView:nil];
 	return NSPointInRect(mouseLocation, cellFrame) ? (NSCellHitContentArea | NSCellHitTrackableArea) : NSCellHitNone;
@@ -457,12 +457,12 @@ float clampf(float value, float min_inclusive, float max_inclusive)
 
         CGFloat xRatio = _trackingThumbCenterX / _trackingCellFrame.size.width;
             
-        NSCellStateValue desiredState;
+		NSControlStateValue desiredState;
         
         if (xRatio < .5)
-            desiredState = NSOffState;
+            desiredState = NSControlStateValueOff;
         else
-            desiredState = NSOnState;
+            desiredState = NSControlStateValueOn;
         
         if (desiredState != _trackingState) {
             
@@ -482,7 +482,7 @@ float clampf(float value, float min_inclusive, float max_inclusive)
 	NSControl *control = [controlView isKindOfClass:[NSControl class]] ? (NSControl *)controlView : nil;
 	if (control) {
         
-        NSCellStateValue desiredState;
+		NSControlStateValue desiredState;
         
         // has to set the state to the previous to the expected state
         // because it loops internally afterwards
@@ -491,16 +491,16 @@ float clampf(float value, float min_inclusive, float max_inclusive)
             CGFloat xRatio = _trackingThumbCenterX / _trackingCellFrame.size.width;
             
             if (xRatio < .5)
-                desiredState = NSOffState;
+                desiredState = NSControlStateValueOff;
             else
-                desiredState = NSOnState;
+                desiredState = NSControlStateValueOn;
             
         } else {
             // if clicked in place, just toggle state
             desiredState = 1 - self.state;
         }
 
-        if (desiredState == NSOffState) {
+        if (desiredState == NSControlStateValueOff) {
             _backgroundState = NOMTSwitchBackgroundStateOffPressed;
             [self beginBackgroundTransitionTo:NOMTSwitchBackgroundStateOff];
         }
